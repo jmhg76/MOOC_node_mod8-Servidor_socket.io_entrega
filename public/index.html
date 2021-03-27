@@ -1,126 +1,131 @@
 <!doctype html>
 <html>
-  <head>
+
+<head>
     <title>Socket.IO chat</title>
     <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
     <link href="/style.css" rel="stylesheet">
-  </head>
-  <body>
+</head>
+
+<body>
     <nav>
-      <h1>Chat</h1>
-     
+        <h1>Chat</h1>
+
     </nav>
     <ul id="messages"></ul>
     <form action="">
-      <span id="name">Anonymous:</span>
-      <input id="message" autocomplete="off" placeholder="Start writing..." />
-       <button id="confetti" title="Throw confetti" type="button" ><img src="/confetti.png" alt="Throw confetti"/></button>
-       <button id="send" type="submit" title="Send a message" >Send</button>
+        <span id="name">Anonymous:</span>
+        <input id="message" autocomplete="off" placeholder="Start writing..." />
+        <button id="confetti" title="Throw confetti" type="button"><img src="/confetti.png" alt="Throw confetti"/></button>
+        <button id="send" type="submit" title="Send a message">Send</button>
     </form>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.dev.js"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
     <script src="confetti.min.js"></script>
     <script>
-      $(function () {
+        $(function() {
 
-        const askUserName = () => {
-          return prompt("What is your name?") || askUserName();
-        }
+            const askUserName = () => {
+                return prompt("What is your name?") || askUserName();
+            }
 
-        const goToBottom = () => window.scrollTo(0, document.body.scrollHeight);
-        
-
-        let lastMessageFrom = null;
-        const user = askUserName();
-        $('#name').text(user + ":");
-
-        // Create socket connection
-        const socket = io.connect("http://localhost:3000", {query: `name=${user}`});
-
-        // Messages sent
-        $('form').submit(function(){
-          if ($('#message').val()) {
-            socket.emit('chat_message_sent', { content: $('#message').val() });
-            $('#message').val('');
-            $('#message').focus();
-          }
-          return false;
-        });
-
-        $('#confetti').on('click', () => {
-          socket.emit("confetti_thrown");
-        });
+            const goToBottom = () => window.scrollTo(0, document.body.scrollHeight);
 
 
-         // Messages received
-        socket.on('connect', function(){
-          const newMessage = $(`<li class="announcement">`)
-             .html(`You have just joined the chat.`);
-           $('#messages').append(newMessage);
-           goToBottom();
-        });
+            let lastMessageFrom = null;
+            const user = askUserName();
+            $('#name').text(user + ":");
 
-        socket.on('chat_message_received', function(msg){
-          const mine = msg.from === socket.id;
-          if (lastMessageFrom === msg.from) {
-            $( "li .msg" ).last().append(`<br/><span class="content">${msg.content}</span>`);
-          } else {
-            lastMessageFrom = msg.from;
-            const newMessage = $(`<li class="${( mine ? "mine" :"")}">`)
-              .html(`<span class="msg">
+            // Create socket connection
+            const socket = io.connect("http://localhost:3000", {
+                query: `name=${user}`
+            });
+
+            // Messages sent
+            $('form').submit(function() {
+                if ($('#message').val()) {
+                    socket.emit('chat_message_sent', {
+                        content: $('#message').val()
+                    });
+                    $('#message').val('');
+                    $('#message').focus();
+                }
+                return false;
+            });
+
+            $('#confetti').on('click', () => {
+                socket.emit("confetti_thrown");
+            });
+
+
+            // Messages received
+            socket.on('connect', function() {
+                const newMessage = $(`<li class="announcement">`)
+                    .html(`You have just joined the chat.`);
+                $('#messages').append(newMessage);
+                goToBottom();
+            });
+
+            socket.on('chat_message_received', function(msg) {
+                const mine = msg.from === socket.id;
+                if (lastMessageFrom === msg.from) {
+                    $("li .msg").last().append(`<br/><span class="content">${msg.content}</span>`);
+                } else {
+                    lastMessageFrom = msg.from;
+                    const newMessage = $(`<li class="${( mine ? "mine" :"")}">`)
+                        .html(`<span class="msg">
                       <span class="user" >${mine ? "Me" : msg.user}</span><br/>
                       <span class="content">${msg.content}</span>
                      </span>`);
-            $('#messages').append(newMessage);
-          }
-          goToBottom();
+                    $('#messages').append(newMessage);
+                }
+                goToBottom();
+            });
+
+            socket.on('new_member', function(msg) {
+                const mine = msg.from === socket.id;
+                if (!mine) {
+                    const newMessage = $(`<li class="announcement">`)
+                        .html(`<b>${msg.user}</b> has just joined the chat. There are ${msg.counter || 0} members.`);
+                    $('#messages').append(newMessage);
+                }
+                goToBottom();
+            });
+
+
+            socket.on('member_exit', function(msg) {
+                const mine = msg.from === socket.id;
+                if (!mine) {
+                    const newMessage = $(`<li class="announcement">`)
+                        .html(`<b>${msg.user}</b> has just left the chat. There are ${msg.counter || 0} members left.`);
+                    $('#messages').append(newMessage);
+                }
+                goToBottom();
+            });
+
+
+            socket.on('confetti_received', function(msg) {
+                confetti.start(4000);
+                const mine = msg.from === socket.id;
+                if (!mine) {
+                    const newMessage = $(`<li class="announcement">`)
+                        .html(`<b>${msg.user}</b> has thrown confetti!`);
+                    $('#messages').append(newMessage);
+                }
+                goToBottom();
+            });
+
+            socket.on('disconnect', function() {
+                const newMessage = $(`<li class="announcement">`)
+                    .html(`You have just left the chat.`);
+                $('#messages').append(newMessage);
+                goToBottom();
+            });
+
         });
 
-        socket.on('new_member', function(msg){
-          const mine = msg.from === socket.id;
-          if (!mine) {
-            const newMessage = $(`<li class="announcement">`)
-              .html(`<b>${msg.user}</b> has just joined the chat. There are ${msg.counter || 0} members.`);
-            $('#messages').append(newMessage);
-          }
-          goToBottom();
-        });
-
-
-        socket.on('member_exit', function(msg){
-          const mine = msg.from === socket.id;
-          if (!mine) {
-            const newMessage = $(`<li class="announcement">`)
-              .html(`<b>${msg.user}</b> has just left the chat. There are ${msg.counter || 0} members left.`);
-            $('#messages').append(newMessage);
-          }
-          goToBottom();
-        });
-
-
-        socket.on('confetti_received', function(msg){
-          confetti.start(4000);
-          const mine = msg.from === socket.id;
-          if (!mine) {
-            const newMessage = $(`<li class="announcement">`)
-              .html(`<b>${msg.user}</b> has thrown confetti!`);
-            $('#messages').append(newMessage);
-          }
-           goToBottom();
-        });
-
-        socket.on('disconnect', function(){
-          const newMessage = $(`<li class="announcement">`)
-              .html(`You have just left the chat.`);
-            $('#messages').append(newMessage);
-          goToBottom();
-        });
-
-      });
-      
-      $('#message').focus();
-
+        $('#message').focus();
     </script>
-  </body>
-</html>
+</body>
 
+</html>

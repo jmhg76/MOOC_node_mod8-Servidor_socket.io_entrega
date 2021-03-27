@@ -1,26 +1,182 @@
-html, body { min-height: calc(100% - 37px); height: 1px; }
-      * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Roboto', sans-serif; font-size: 16px; }
-      body { font: 12px Helvetica, Arial; background-color: white; line-height: 18px;}
-      nav { height: 50px; position: fixed; display: block; width: 100%; top: 0; background: #F15946; }
-      nav h1 { line-height: 50px; color: white; margin-left: 10px; display: inline-block; font-size: 22px; }
-      nav button { float: right; border: 1px solid white; background-color: transparent; color: white; padding: 10px 15px; margin: 5px; font-weight: bold; outline: none; cursor: pointer;}
-      form { position: fixed; bottom: 0; width: 100%; display: flex; flex-direction: row; justify-content: flex-start; border-top: 2px solid #F15946; background: white;}
-      form button { border: none; outline: none; padding: 10px; cursor: pointer; outline: none; background-color: white;}
-      #send { min-width: 12%; background: #F15946; color: white; }
-      #message { border: 0; padding: 10px 20px; flex: 1; outline: none; height: 50px;}
-      #message::placeholder { color: #ddd;}
-      #confetti { padding: 0px; }
-      #confetti img { width: 40px; }
-      #name { color: #F15946; border: none; padding: 10px;  line-height: 32px; vertical-align: middle; font-weight: bolder;}
-      #messages { list-style-type: none; margin: 0; padding: 0; background-color: #eee; min-height: calc(100% - 26px); margin-top: 50px;}
-      #messages li { padding: 1px 5px; }
-      #messages li.announcement { text-align: center; margin-bottom: 5px; }
-      #messages li.mine { text-align: right; }
-      #messages li .msg { width: auto; padding: 10px 15px; border-radius:10px; display: inline-block; max-width: 90%; background-color: #F9C22E; color: white;}
-      #messages li .user { margin-bottom: 5px; display: inline-block; text-decoration: underline;}
-      #messages li.mine span { background-color: #aaaaaa; }
-      #messages { margin-bottom: 50px; padding: 5px; }
-      li.mine + li:not(.mine) {margin-top: 10px;}
-      li:not(.mine) + li.mine {margin-top: 10px;}
-      li.mine:after {content: " "; display: inline-block; width: 8px; height: 8px; bottom: 0px; background: #aaaaaa; margin-bottom: 4px; transform: rotate(45deg); margin-left: -4px;  }
-      li:not(.announcement):not(.mine):before { content: " "; display: inline-block; width: 8px; height: 8px; bottom: 0px;  background-color: #F9C22E; transform: rotate(45deg); margin-right: -4px; margin-bottom: 4px; }
+html,
+body {
+    min-height: calc(100% - 37px);
+    height: 1px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Roboto', sans-serif;
+    font-size: 16px;
+}
+
+body {
+    font: 12px Helvetica, Arial;
+    background-color: white;
+    line-height: 18px;
+}
+
+nav {
+    height: 50px;
+    position: fixed;
+    display: block;
+    width: 100%;
+    top: 0;
+    background: #F15946;
+}
+
+nav h1 {
+    line-height: 50px;
+    color: white;
+    margin-left: 10px;
+    display: inline-block;
+    font-size: 22px;
+}
+
+nav button {
+    float: right;
+    border: 1px solid white;
+    background-color: transparent;
+    color: white;
+    padding: 10px 15px;
+    margin: 5px;
+    font-weight: bold;
+    outline: none;
+    cursor: pointer;
+}
+
+form {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    border-top: 2px solid #F15946;
+    background: white;
+}
+
+form button {
+    border: none;
+    outline: none;
+    padding: 10px;
+    cursor: pointer;
+    outline: none;
+    background-color: white;
+}
+
+#send {
+    min-width: 12%;
+    background: #F15946;
+    color: white;
+}
+
+#message {
+    border: 0;
+    padding: 10px 20px;
+    flex: 1;
+    outline: none;
+    height: 50px;
+}
+
+#message::placeholder {
+    color: #ddd;
+}
+
+#confetti {
+    padding: 0px;
+}
+
+#confetti img {
+    width: 40px;
+}
+
+#name {
+    color: #F15946;
+    border: none;
+    padding: 10px;
+    line-height: 32px;
+    vertical-align: middle;
+    font-weight: bolder;
+}
+
+#messages {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    background-color: #eee;
+    min-height: calc(100% - 26px);
+    margin-top: 50px;
+}
+
+#messages li {
+    padding: 1px 5px;
+}
+
+#messages li.announcement {
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+#messages li.mine {
+    text-align: right;
+}
+
+#messages li .msg {
+    width: auto;
+    padding: 10px 15px;
+    border-radius: 10px;
+    display: inline-block;
+    max-width: 90%;
+    background-color: #F9C22E;
+    color: white;
+}
+
+#messages li .user {
+    margin-bottom: 5px;
+    display: inline-block;
+    text-decoration: underline;
+}
+
+#messages li.mine span {
+    background-color: #aaaaaa;
+}
+
+#messages {
+    margin-bottom: 50px;
+    padding: 5px;
+}
+
+li.mine+li:not(.mine) {
+    margin-top: 10px;
+}
+
+li:not(.mine)+li.mine {
+    margin-top: 10px;
+}
+
+li.mine:after {
+    content: " ";
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    bottom: 0px;
+    background: #aaaaaa;
+    margin-bottom: 4px;
+    transform: rotate(45deg);
+    margin-left: -4px;
+}
+
+li:not(.announcement):not(.mine):before {
+    content: " ";
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    bottom: 0px;
+    background-color: #F9C22E;
+    transform: rotate(45deg);
+    margin-right: -4px;
+    margin-bottom: 4px;
+}
